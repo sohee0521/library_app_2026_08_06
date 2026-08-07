@@ -7,7 +7,7 @@ import Nav from "./Components/Nav";
 
 export default function Router() {
   return (
-    <div className=" mx-auto max-w-lg min-w-s min-h-screen bg-amber-100">
+    <div className=" mx-auto max-w-md min-w-s min-h-screen bg-white">
       <HashRouter>
         <Routes>
           <Route path="/" element={<Home />}></Route>
