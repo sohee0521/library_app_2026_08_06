@@ -4,6 +4,8 @@ import Home from "./Pages/Home/Home";
 import Search from "./Pages/Search/Search";
 import Detail from "./Pages/Detail/Detail";
 import Nav from "./Components/Nav";
+import AddBook from "./Pages/Home/AddBook";
+import Log from "./Pages/Home/Log";
 
 export default function Router() {
   return (
@@ -13,6 +15,8 @@ export default function Router() {
           <Route path="/" element={<Home />}></Route>
           <Route path="/search" element={<Search />}></Route>
           <Route path="/detail/:id" element={<Detail />}></Route>
+          <Route path="/addBook" element={<AddBook />}></Route>
+          <Route path="/log" element={<Log />}></Route>
           <Route path="/*" element={<ErrorPage />}></Route>
         </Routes>
         <Nav />
