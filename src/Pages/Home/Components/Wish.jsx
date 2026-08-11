@@ -27,7 +27,7 @@ export default function Wish() {
           </div>
           <div className="flex flex-col ">
             <h5 className="w-full line-clamp-2 break-all h-[32px]">
-              책박스 폭을 꽉 채우고 글자 단위로 잘라 빈 여백을 최소화합니다.
+              {/* 책박스 폭을 꽉 채우고 글자 단위로 잘라 빈 여백을 최소화*/}
             </h5>
             <h6 className="text-[var(--dark-gray)]">저자</h6>
           </div>

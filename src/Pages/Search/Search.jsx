@@ -42,7 +42,7 @@ export default function Search() {
   const isSearchActive = searchQuery.trim() !== "";
 
   return (
-    <div className="max-w-md min-h-screen mx-auto px-[25px] pt-[60px] space-y-[30px] pb-[100px] relative">
+    <div className="max-w-md min-h-screen mx-auto px-[25px] pt-[40px] space-y-[30px] pb-[100px] relative">
       {/*  검색시 배경 */}
       {isSearchActive && (
         <div
