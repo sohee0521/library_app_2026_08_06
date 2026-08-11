@@ -18,7 +18,7 @@ const fetchAladinApi = async (endpoint, customParams = {}) => {
 
     return data;
   } catch (error) {
-    console.error(`❌ [Aladin API Error] ${endpoint}:`, error);
+    console.error(`[Aladin API Error] ${endpoint}:`, error);
     return null;
   }
 };

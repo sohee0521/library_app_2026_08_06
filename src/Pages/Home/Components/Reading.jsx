@@ -30,32 +30,31 @@ export default function Reading() {
 
   return (
     <div className="h-full relative">
-      <div className="flex flex-col gap-[100px] justify-center items-center mt-[120px] mb-auto pb-[100px]">
+      <div className="flex flex-col gap-[100px] justify-center items-center mt-[150px] mb-auto pb-[100px]">
         {/* 4개의 선반을 순회 */}
         {shelvesData.map((shelfBooks, shelfIndex) => (
           <div
             key={shelfIndex}
             className="w-[340px] flex flex-col justify-center items-center relative"
           >
-            {/* 📚 선반 위에 올려질 책 3권 영역 */}
+            {/* 선반 위에 올려질 책 영역 */}
             <div className="absolute bottom-[38px] left-[25px] px-[20px] flex items-end justify-start gap-[20px] z-10">
               {shelfBooks.map((book) => (
-                <div
-                  key={book.id}
-                  className="w-[65px] h-[95px] shadow-md hover:scale-105 transition-transform flex-shrink-0"
-                >
-                  {book.bookApi?.cover ? (
-                    <img
-                      src={book.bookApi.cover}
-                      alt={book.bookApi.title}
-                      className="w-full h-full object-cover rounded-[2px]"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-300 flex items-center justify-center text-xs">
-                      {book.bookApi?.title || book.title}
-                    </div>
-                  )}
-                </div>
+                <Link to={`/log/${book.id}`} key={book.id}>
+                  <div className="w-[65px] h-[95px] shadow-md">
+                    {book.bookApi?.cover ? (
+                      <img
+                        src={book.bookApi.cover}
+                        alt={book.bookApi.title}
+                        className="w-full h-full object-cover rounded-[2px]"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-300 flex items-center justify-center text-xs">
+                        {book.bookApi?.title || book.title}
+                      </div>
+                    )}
+                  </div>
+                </Link>
               ))}
             </div>
 

@@ -16,7 +16,7 @@ export default function Router() {
           <Route path="/search" element={<Search />}></Route>
           <Route path="/detail/:id" element={<Detail />}></Route>
           <Route path="/addBook" element={<AddBook />}></Route>
-          <Route path="/log" element={<Log />}></Route>
+          <Route path="/log/:id" element={<Log />}></Route>
           <Route path="/*" element={<ErrorPage />}></Route>
         </Routes>
         <Nav />
