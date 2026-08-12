@@ -41,8 +41,8 @@ export default function BestSeller() {
   }
 
   return (
-    <div className="space-y-[30px] ">
-      <h1>Best Seller</h1>
+    <div className="space-y-[30px] max-h-[700px]  overflow-y-auto  [::-webkit-scrollbar]:hidden [scrollbar-width:none] ">
+      <h1 className="mt-[10px]">Best Seller</h1>
       <div className="flex gap-[10px] overflow-x-auto  [::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         {GENRES.map((genre) => {
           const isSelected = selectedGenre === genre.id;
@@ -64,7 +64,7 @@ export default function BestSeller() {
         })}
       </div>
 
-      <div className="flex flex-col gap-[15px] py-[10px] max-h-[580px]  overflow-y-auto  [::-webkit-scrollbar]:hidden [scrollbar-width:none]  ">
+      <div className="flex flex-col gap-[15px]   ">
         {books.map((book, index) => {
           const coverImg = book.cover;
           const title = book.title;

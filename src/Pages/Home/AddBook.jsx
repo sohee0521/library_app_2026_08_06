@@ -2,7 +2,7 @@ import { ChevronLeft, SearchCheck, Check } from "lucide-react";
 import { useState, useEffect } from "react";
 import Search from "../Search/Search";
 import { Link, useNavigate } from "react-router-dom";
-import { searchAladinBooks } from "../../Api/bookApi";
+import { searchAladinBooks, getAladinBookDetail } from "../../Api/bookApi";
 
 export default function AddBook() {
   const navigate = useNavigate();
@@ -65,32 +65,52 @@ export default function AddBook() {
     if (errors.title || errors.date) return;
 
     // 알라딘 API 데이터 확정
-    let finalBookApiData = null;
+    let targetBook = selectedBook;
 
-    if (selectedBook) {
-      //목록에서 선택한 경우
-      finalBookApiData = selectedBook;
-    } else {
-      // 직접 제목 타이핑한 경우 -> API에서 검색해서 첫번째 결과 가져오기
+    // 만약 검색 목록에서 선택 안 하고 직접 타이핑했다면, 첫 번째 검색 결과 가져오기
+    if (!targetBook && title.trim()) {
       try {
-        const searchResults = await searchAladinBooks(title);
-        if (searchResults && searchResults.length > 0) {
-          finalBookApiData = searchResults[0]; // 가장 연관성 높은 첫 번째 책
-        } else {
-          // 검색 결과 없을 경우 기본 제목만 저장
-          finalBookApiData = { title };
+        const results = await searchAladinBooks(title);
+        if (results && results.length > 0) {
+          targetBook = results[0];
         }
       } catch (error) {
-        console.error(" API 조회 실패:", error);
-        finalBookApiData = { title };
+        console.error("API 검색 실패:", error);
       }
     }
 
-    //새 책 정보 저장할 객체 생성
+    let finalBookApiData = targetBook || { title };
+
+    // 쪽수
+    const targetItemId =
+      targetBook?.itemId || targetBook?.isbn13 || targetBook?.isbn;
+    if (targetItemId) {
+      try {
+        const detailData = await getAladinBookDetail(targetItemId);
+        if (detailData) {
+          // 검색 기본 데이터와 상세 데이터(subInfo 등) 병합
+          finalBookApiData = {
+            ...targetBook,
+            ...detailData,
+            itemPage:
+              detailData.subInfo?.itemPage ||
+              detailData.itemPage ||
+              targetBook.subInfo?.itemPage,
+          };
+        }
+      } catch (error) {
+        console.error("상세 정보 가져오기 실패:", error);
+      }
+    }
+
+    // 새 책 정보 저장할 객체 생성
     const newBook = {
       id: Date.now(),
       status: status,
-      bookApi: selectedBook || { title }, // ✨ 선택한 알라딘 책 객체(cover 포함) 저장!
+      bookApi: finalBookApiData,
+      // 외부에서도 바로 꺼내 쓸 수 있게 itemPage 따로 상위에 저장
+      itemPage:
+        finalBookApiData.itemPage || finalBookApiData.subInfo?.itemPage || 250,
       dates: {
         since,
         until,
@@ -115,16 +135,13 @@ export default function AddBook() {
     navigate(-1);
   };
 
-  // 저장된책정보 콘솔
+  // 저장된 책 정보 콘솔 확인
   useEffect(() => {
     const savedData = localStorage.getItem("myBooks");
 
     if (savedData) {
       const parsedBooks = JSON.parse(savedData);
-
-      console.log("🔄 새로고침 - 로컬스토리지 전체 데이터:");
-
-      console.log(parsedBooks);
+      console.log("🔄 새로고침 - 로컬스토리지 전체 데이터:", parsedBooks);
     } else {
       console.log("📭 새로고침 - 저장된 데이터가 없습니다.");
     }
@@ -133,11 +150,14 @@ export default function AddBook() {
   //------------------------ html,css---------------------------------------
   return (
     <div className="max-w-md min-h-screen mx-auto px-[25px] pt-[50px] space-y-[40px]">
-      <div className="flex gap-[15px] items-center">
+      <div>
         <Link to={-1}>
-          <ChevronLeft size={28} strokeWidth={1.5} color="var(--dark-gray)" />
+          <div className="flex gap-[5px] items-center">
+            <ChevronLeft size={28} strokeWidth={1.5} color="var(--dark-gray)" />
+
+            <h3>책 추가</h3>
+          </div>
         </Link>
-        <h3>책 추가</h3>
       </div>
       <form onSubmit={handleSave} className="flex flex-col gap-[40px] ">
         <div className="flex flex-col gap-[15px]">
@@ -151,7 +171,7 @@ export default function AddBook() {
                 // 사용자가 제목을 다시 수정하면 기존 선택 정보를 해제
                 if (selectedBook) setSelectedBook(null);
               }}
-              placeholder="검색어를 입력하세요"
+              placeholder="제목을 검색하세요"
               className={`w-full outline-none bg-transparent ${
                 title ? "text-[var(--black)]" : "text-[var(--dark-gray)]"
               }`}
@@ -228,6 +248,7 @@ export default function AddBook() {
                 since ? "text-[var(--black)] " : "text-[var(--dark-gray)]"
               }`}
             />
+            <h4>~</h4>
             <input
               type="date"
               value={until}
@@ -243,13 +264,15 @@ export default function AddBook() {
           )}
         </div>
         <div className="flex flex-col gap-[15px]">
-          <h4>메모</h4>
+          <div className="flex items-center gap-[3px]">
+            <h4>메모 </h4> <h5>(선택)</h5>
+          </div>
           <div className="w-full min-h-[150px] flex items-start px-[10px] pt-[15px] bg-[var(--light-gray)] text-[var(--dark-gray)] ">
             <textarea
               value={memoText}
               onChange={(e) => setMemoText(e.target.value)}
               rows={6}
-              placeholder="책을 읽고 오늘의 감상평을 적어보세요 (선택)"
+              placeholder="책을 읽고 오늘의 감상평을 적어보세요 "
               className={`w-full outline-none resize-none bg-[var(--light-gray)] ${
                 memoText ? "text-[var(--black)]" : "text-[var(--dark-gray)]"
               }`}

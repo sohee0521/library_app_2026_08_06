@@ -16,7 +16,7 @@ export default function Loading() {
           secondaryColor="##2ad1ff"
           animationDuration="1.25"
         />
-        <h2 className="!text-[28px]">LOADING...</h2>
+        <h2 className="!text-[24px]">LOADING...</h2>
       </div>
     </div>
   );

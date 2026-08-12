@@ -61,9 +61,9 @@ export default function Search() {
             placeholder="검색어를 입력하세요"
             className="w-full outline-none bg-transparent"
           />
-          <button type="button">
+          {/* <button type="button">
             <SearchCheck size={28} strokeWidth={1.5} color={"#1a1a1a"} />
-          </button>
+          </button> */}
         </div>
 
         {/* 검색 결과 창 */}
@@ -125,7 +125,6 @@ export default function Search() {
         )}
       </div>
 
-      {/* 📚 3. 베스트셀러 컴포넌트 */}
       <BestSeller />
     </div>
   );

@@ -72,16 +72,16 @@ export const getAladinBookDetail = async (itemId, itemIdType = "ItemId") => {
   return bookDetail;
 };
 
-// 테스트
-(async () => {
-  console.log(" 알라딘 공통 API 테스트 실행 중...");
+// // 테스트
+// (async () => {
+//   console.log(" 알라딘 공통 API 테스트 실행 중...");
 
-  // 리스트 테스트
-  await getAladinBooks("Bestseller");
+//   // 리스트 테스트
+//   await getAladinBooks("Bestseller");
 
-  // 검색 후 첫 번째 책 상세 정보까지 연쇄 조회 테스트
-  const searchResults = await searchAladinBooks("모순");
-  if (searchResults.length > 0) {
-    await getAladinBookDetail(searchResults[0].itemId);
-  }
-})();
+//   // 검색 후 첫 번째 책 상세 정보까지 연쇄 조회 테스트
+//   const searchResults = await searchAladinBooks("모순");
+//   if (searchResults.length > 0) {
+//     await getAladinBookDetail(searchResults[0].itemId);
+//   }
+// })();

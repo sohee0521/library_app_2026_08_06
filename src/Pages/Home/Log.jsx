@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import Completed from "./Components/Completed";
 
 export default function Log() {
   const { id } = useParams();
@@ -84,15 +85,44 @@ export default function Log() {
 
     localStorage.setItem("myBooks", JSON.stringify(updatedBooks));
   };
+  // 완독 처리 함수
+  const handleCompleteBook = () => {
+    const savedBooks = JSON.parse(localStorage.getItem("myBooks")) || [];
+    const cleanUrlId = String(id).replace(/[^0-9]/g, "");
+
+    const today = new Date();
+    const completedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+    const updatedBooks = savedBooks.map((item) => {
+      const cleanItemId = String(item.id).replace(/[^0-9]/g, "");
+      if (cleanItemId === cleanUrlId) {
+        return {
+          ...item,
+          status: "completed", // 읽는 중 -> 완독으로 상태 변경
+          completedDate: completedDate, // 완독한 날짜 저장 (필요 시 활용)
+        };
+      }
+      return item;
+    });
+
+    // 로컬스토리지에 저장 및 현재 state 갱신
+    localStorage.setItem("myBooks", JSON.stringify(updatedBooks));
+    setBook((prev) => ({ ...prev, status: "completed" }));
+
+    // 완독 완료 후 완독목록(또는 메인) 페이지로 이동 (원하는 라우트로 변경하세요)
+    navigate("/", { state: { tab: "completed" } });
+  };
 
   const title = book.bookApi?.title;
   const author = book.bookApi?.author || "작가 미상";
   const coverImg = book.bookApi?.cover;
   const readDate = book.readDate || "날짜 미지정";
 
+  const isCompleted = book.status === "completed";
+
   return (
     <div className="max-w-md min-h-screen mx-auto px-[25px] pt-[50px] space-y-[40px]">
-      <div className="flex gap-[15px] items-center">
+      <div className="flex gap-[5px] items-center">
         <Link to={-1}>
           <ChevronLeft size={28} strokeWidth={1.5} color="var(--dark-gray)" />
         </Link>
@@ -101,14 +131,14 @@ export default function Log() {
       <div className="flex flex-col gap-[15px]">
         <h4>제목</h4>
         <div className="flex gap-[10px]">
-          <div className="w-[70px] h-[100px] bg-amber-100">
+          <div className="w-[100px] = bg-amber-100">
             <img
               src={coverImg}
               alt=""
-              className="w-[70px] h-[100px] object-cover "
+              className="w-[100px] h-[135px] object-cover "
             />
           </div>
-          <div className="flex flex-col justify-between py-[5px]">
+          <div className="flex flex-col  justify-between py-[5px]">
             <div>
               <h4>{title}</h4>
               <h5 className="text-[var(--dark-gray)]">{author}</h5>
@@ -159,6 +189,18 @@ export default function Log() {
           )}
         </div>
       </div>
+      <button
+        type="button"
+        onClick={handleCompleteBook}
+        disabled={isCompleted}
+        className={`w-full h-[45px] rounded-[5px] text-white transition-all duration-150 ${
+          isCompleted
+            ? "bg-[var(--gray)] cursor-not-allowed opacity-60"
+            : "bg-[var(--main-blue)] active:scale-[0.99]"
+        }`}
+      >
+        <h4>완독</h4>
+      </button>
     </div>
   );
 }

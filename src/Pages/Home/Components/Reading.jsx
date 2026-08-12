@@ -19,7 +19,7 @@ export default function Reading() {
     }
   }, []);
 
-  const TOTAL_SHELVES = 4;
+  const TOTAL_SHELVES = 3;
   const SHELF_CAPACITY = 3;
 
   // 책들을 3개씩 배열로 쪼개기
@@ -30,18 +30,18 @@ export default function Reading() {
 
   return (
     <div className="h-full relative">
-      <div className="flex flex-col gap-[100px] justify-center items-center mt-[150px] mb-auto pb-[100px]">
+      <div className="flex flex-col gap-[140px] justify-center items-center mt-[150px] mb-auto pb-[100px]">
         {/* 4개의 선반을 순회 */}
         {shelvesData.map((shelfBooks, shelfIndex) => (
           <div
             key={shelfIndex}
-            className="w-[340px] flex flex-col justify-center items-center relative"
+            className="w-full flex flex-col justify-center items-center relative"
           >
             {/* 선반 위에 올려질 책 영역 */}
-            <div className="absolute bottom-[38px] left-[25px] px-[20px] flex items-end justify-start gap-[20px] z-10">
+            <div className="absolute bottom-[45px] left-105px] px-[20px] flex items-end justify-start gap-[15px] z-10">
               {shelfBooks.map((book) => (
                 <Link to={`/log/${book.id}`} key={book.id}>
-                  <div className="w-[65px] h-[95px] shadow-md">
+                  <div className="w-[95px] h-[130px] shadow-md">
                     {book.bookApi?.cover ? (
                       <img
                         src={book.bookApi.cover}
@@ -58,11 +58,17 @@ export default function Reading() {
               ))}
             </div>
 
-            <img src={shelf} alt="선반" className="w-full relative z-0" />
+            <div className="w-full">
+              <img
+                src={shelf}
+                alt="선반"
+                className="w-full h-[45px]  relative z-0"
+              />
+            </div>
           </div>
         ))}
 
-        <div className="absolute right-[36px] bottom-[120px]">
+        <div className="absolute right-[36px] bottom-[126px]">
           <img src={cat} alt="고양이" />
         </div>
 
