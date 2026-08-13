@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Trash } from "lucide-react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Completed from "./Components/Completed";
 
@@ -53,6 +53,25 @@ export default function Log() {
     );
   }
 
+  const handleDeleteBook = () => {
+    if (!window.confirm("정말 이 기록을 삭제하시겠습니까?")) return;
+
+    const savedBooks = JSON.parse(localStorage.getItem("myBooks")) || [];
+    const cleanUrlId = String(id).replace(/[^0-9]/g, "");
+
+    // 해당 책을 제외한 목록으로 로컬스토리지 업데이트
+    const updatedBooks = savedBooks.filter((item) => {
+      const cleanItemId = String(item.id).replace(/[^0-9]/g, "");
+      return cleanItemId !== cleanUrlId;
+    });
+
+    localStorage.setItem("myBooks", JSON.stringify(updatedBooks));
+    alert("삭제되었습니다.");
+
+    // 삭제 후 이전 화면(홈/완독/읽는중 목록)으로 이동
+    navigate(-1);
+  };
+
   const handleAddMemo = (e) => {
     e.preventDefault();
     if (!memoInput.trim()) return; // 빈 값 방지
@@ -99,7 +118,11 @@ export default function Log() {
         return {
           ...item,
           status: "completed", // 읽는 중 -> 완독으로 상태 변경
-          completedDate: completedDate, // 완독한 날짜 저장 (필요 시 활용)
+          completedDate: completedDate, // 완독 시점 날짜 기록
+          dates: {
+            ...item.dates,
+            until: completedDate, // dates.until 항목에 기록
+          },
         };
       }
       return item;
@@ -107,35 +130,47 @@ export default function Log() {
 
     // 로컬스토리지에 저장 및 현재 state 갱신
     localStorage.setItem("myBooks", JSON.stringify(updatedBooks));
-    setBook((prev) => ({ ...prev, status: "completed" }));
+    setBook((prev) => ({
+      ...prev,
+      status: "completed",
+      completedDate,
+      dates: { ...prev.dates, until: completedDate },
+    }));
 
-    // 완독 완료 후 완독목록(또는 메인) 페이지로 이동 (원하는 라우트로 변경하세요)
     navigate("/", { state: { tab: "completed" } });
   };
 
   const title = book.bookApi?.title;
   const author = book.bookApi?.author || "작가 미상";
   const coverImg = book.bookApi?.cover;
-  const readDate = book.readDate || "날짜 미지정";
 
   const isCompleted = book.status === "completed";
 
+  // 날짜 가공 (읽는중 or 완독)
+  const sinceDate = book.dates?.since || book.readDate || "";
+  const untilDate = book.dates?.until || book.completedDate;
+
+  const displayDate =
+    isCompleted && untilDate ? `${sinceDate} ~ ${untilDate}` : `${sinceDate} ~`;
+
   return (
     <div className="max-w-md min-h-screen mx-auto px-[25px] pt-[50px] space-y-[40px]">
-      <div className="flex gap-[5px] items-center">
+      <div>
         <Link to={-1}>
-          <ChevronLeft size={28} strokeWidth={1.5} color="var(--dark-gray)" />
+          <div className="flex gap-[5px] items-center">
+            <ChevronLeft size={28} strokeWidth={1.5} color="var(--dark-gray)" />
+            <h3>기록</h3>
+          </div>
         </Link>
-        <h3>기록</h3>
       </div>
       <div className="flex flex-col gap-[15px]">
         <h4>제목</h4>
         <div className="flex gap-[10px]">
-          <div className="w-[100px] = bg-amber-100">
+          <div className="w-[100px] h-[135px] flex-shrink-0  bg-amber-100">
             <img
               src={coverImg}
               alt=""
-              className="w-[100px] h-[135px] object-cover "
+              className="w-full h-full object-cover "
             />
           </div>
           <div className="flex flex-col  justify-between py-[5px]">
@@ -143,7 +178,16 @@ export default function Log() {
               <h4>{title}</h4>
               <h5 className="text-[var(--dark-gray)]">{author}</h5>
             </div>
-            <h6 className="text-[var(--dark-gray)]">{readDate}</h6>
+            <div className="w-[full] flex justify-between items-center">
+              <h6 className="text-[var(--dark-gray)] text-sm">{displayDate}</h6>
+              <button
+                type="button"
+                onClick={handleDeleteBook}
+                className="p-1 hover:opacity-70 transition-opacity cursor-pointer"
+              >
+                <Trash size={16} color="var(--dark-gray)" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -162,7 +206,7 @@ export default function Log() {
             maxLength={100}
             className="w-full outline-none resize-none text-sm placeholder:text-[var(--dark-gray)]"
           />
-          <div className="flex justify-end mt-2">
+          <div className="flex justify-end px-[5px]">
             <button type="submit">
               <h5 className="text-[var(--main-blue)]">저장</h5>
             </button>
@@ -194,9 +238,7 @@ export default function Log() {
         onClick={handleCompleteBook}
         disabled={isCompleted}
         className={`w-full h-[45px] rounded-[5px] text-white transition-all duration-150 ${
-          isCompleted
-            ? "bg-[var(--gray)] cursor-not-allowed opacity-60"
-            : "bg-[var(--main-blue)] active:scale-[0.99]"
+          isCompleted ? "none" : "bg-[var(--main-blue)] active:scale-[0.99]"
         }`}
       >
         <h4>완독</h4>

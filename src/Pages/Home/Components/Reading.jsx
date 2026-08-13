@@ -1,6 +1,5 @@
 import shelf from "../../../Img/shelf.png";
 import cat from "../../../Img/cat.png";
-import add_btn from "../../../Img/add_btn.png";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -30,7 +29,7 @@ export default function Reading() {
 
   return (
     <div className="h-full relative">
-      <div className="flex flex-col gap-[140px] justify-center items-center mt-[150px] mb-auto pb-[100px]">
+      <div className="flex flex-col  gap-[140px] justify-center items-center mt-[150px] mb-auto pb-[100px]">
         {/* 4개의 선반을 순회 */}
         {shelvesData.map((shelfBooks, shelfIndex) => (
           <div
@@ -40,8 +39,12 @@ export default function Reading() {
             {/* 선반 위에 올려질 책 영역 */}
             <div className="absolute bottom-[45px] left-105px] px-[20px] flex items-end justify-start gap-[15px] z-10">
               {shelfBooks.map((book) => (
-                <Link to={`/log/${book.id}`} key={book.id}>
-                  <div className="w-[95px] h-[130px] shadow-md">
+                <Link
+                  to={`/log/${book.id}`}
+                  key={book.id}
+                  className="group outline-none select-none"
+                >
+                  <div className="w-[95px] h-[130px] shadow-md transition-all duration-150 ease-out active:scale-95 active:-translate-y-1.5 active:shadow-xl active:brightness-95">
                     {book.bookApi?.cover ? (
                       <img
                         src={book.bookApi.cover}
@@ -71,12 +74,6 @@ export default function Reading() {
         <div className="absolute right-[36px] bottom-[126px]">
           <img src={cat} alt="고양이" />
         </div>
-
-        <Link to={"/addBook"} className="absolute right-0 bottom-[90px] z-20">
-          <button className="w-[52px] h-[52px] flex justify-center items-center bg-[var(--black)] rounded-full hover:opacity-90 transition-opacity">
-            <img src={add_btn} alt="추가" />
-          </button>
-        </Link>
       </div>
     </div>
   );

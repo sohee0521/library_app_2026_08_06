@@ -9,7 +9,7 @@ import Log from "./Pages/Home/Log";
 
 export default function Router() {
   return (
-    <div className=" mx-auto max-w-md min-w-s min-h-screen bg-white">
+    <div className=" mx-auto max-w-md min-w-s min-h-screen bg-white shadow-xl">
       <HashRouter>
         <Routes>
           <Route path="/" element={<Home />}></Route>

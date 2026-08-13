@@ -114,13 +114,16 @@ export default function Detail() {
           )}
           <button
             onClick={toggleLike}
-            className="absolute w-[28px] h-[28px] flex justify-center items-center rounded-full right-[10px] top-[10px] bg-white/75 shadow-sm"
+            className="absolute w-[28px] h-[28px] flex justify-center items-center rounded-full right-[10px] top-[10px] bg-white/75 shadow-sm active:scale-85 active:bg-white transition-all duration-150 cursor-pointer select-none"
           >
             <Heart
               size={20}
               color="var(--dark-gray)"
               strokeWidth={isLiked ? 0 : 1.5}
               fill={isLiked ? "#FF0040" : "none"}
+              className={`transition-all duration-200 ease-out ${
+                isLiked ? "scale-110" : "scale-100"
+              }`}
             />
           </button>
         </div>

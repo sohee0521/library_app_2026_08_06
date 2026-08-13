@@ -94,13 +94,16 @@ export default function Completed() {
   return (
     <div className="flex flex-col items-center w-full min-h-[600px] pt-[10px] pb-[40px] select-none">
       {/* 1. 상단 문구  */}
-      <div className="flex items-baseline gap-[6px] text-base font-medium text-[var(--black)] mb-[40px]">
-        <h2 className="text-2xl font-bold">{readingDays}</h2>
-        <h3>일 동안</h3>
-        <h2 className="text-2xl font-bold ml-1">{totalBooksCount}</h2>
-        <h3>권을 읽어서</h3>
-        <h2 className="text-2xl font-bold ml-1">{totalHeightCm}</h2>
-        <h3>cm가 쌓였어요</h3>
+      <div className="flex items-baseline gap-[5px] text-base font-medium text-[var(--black)] mb-[40px]">
+        <h2 className="text-[var(--main-blue)]">{readingDays}</h2>
+        <h3 className="text-[var(--main-blue)]">일</h3>
+        <h4> 동안</h4>
+        <h2 className="text-[var(--main-blue)]">{totalBooksCount}</h2>
+        <h3 className="text-[var(--main-blue)]">권</h3>
+        <h4>읽어서</h4>
+        <h2 className="text-[var(--main-blue)]">{totalHeightCm}</h2>
+        <h3 className="text-[var(--main-blue)]">cm</h3>
+        <h4>가 쌓였어요</h4>
       </div>
 
       {/* 2. 책 쌓기 시각화 영역 */}
