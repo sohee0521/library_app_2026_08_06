@@ -1,6 +1,6 @@
-import { getAladinBooks } from "../../../Api/bookApi";
+import { getAladinBooks } from "../../../api/bookApi";
 import { useState, useEffect } from "react";
-import Loading from "../../../Components/Loading";
+import Loading from "../../../components/Loading";
 import { Link } from "react-router-dom";
 
 const GENRES = [

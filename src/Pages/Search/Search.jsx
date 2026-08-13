@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SearchCheck } from "lucide-react";
-import { searchAladinBooks } from "../../Api/bookApi";
+import { searchAladinBooks } from "../../api/bookApi";
 import BestSeller from "./Components/BestSeller";
 
 export default function Search() {

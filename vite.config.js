@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  base: "/library_app_2026_08_06/",
   server: {
     proxy: {
       "/api/aladin": {

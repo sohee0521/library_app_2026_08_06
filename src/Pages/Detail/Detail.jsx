@@ -1,35 +1,53 @@
 import { ChevronLeft, Heart } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getAladinBookDetail } from "../../Api/bookApi";
-import Loading from "../../Components/Loading";
+import { getAladinBookDetail } from "../../api/bookApi";
+import Loading from "../../components/Loading";
+
+const getSavedBooks = () => {
+  try {
+    const saved = localStorage.getItem("myBooks");
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
+// 해당 책이 위시리스트 항목과 일치하는지 확인
+const isSameWishBook = (savedBook, targetId) =>
+  String(savedBook.id) === String(targetId) && savedBook.status === "wish";
 
 export default function Detail() {
   const { id } = useParams();
-  const [book, setBook] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
+
+  const [state, setState] = useState({
+    book: null,
+    isLoading: true,
+    isLiked: false,
+  });
 
   useEffect(() => {
+    if (!id) return;
+
     const fetchBookData = async () => {
-      if (!id) return;
-      setIsLoading(true);
+      setState((prev) => ({ ...prev, isLoading: true }));
       try {
         const detailData = await getAladinBookDetail(id);
-        setBook(detailData);
+        const savedBooks = getSavedBooks();
 
-        const savedBooks = localStorage.getItem("myBooks");
-        if (savedBooks) {
-          const parsedBooks = JSON.parse(savedBooks);
-          const isWish = parsedBooks.some(
-            (b) => String(b.id) === String(id) && b.status === "wish",
-          );
-          setIsLiked(isWish);
-        }
+        const isWish = savedBooks.some((savedBook) =>
+          isSameWishBook(savedBook, id),
+        );
+        // some:조건에 만족하는 요소가 하나라도 있는지
+
+        setState({
+          book: detailData,
+          isLoading: false,
+          isLiked: isWish,
+        });
       } catch (error) {
         console.error("책 상세 정보를 불러오는 중 오류 발생:", error);
-      } finally {
-        setIsLoading(false);
+        setState((prev) => ({ ...prev, isLoading: false }));
       }
     };
 
@@ -37,35 +55,32 @@ export default function Detail() {
   }, [id]);
 
   const toggleLike = () => {
-    if (!book) return;
+    if (!state.book) return;
 
-    const savedBooks = localStorage.getItem("myBooks");
-    const parsedBooks = savedBooks ? JSON.parse(savedBooks) : [];
+    const savedBooks = getSavedBooks();
+    const { isLiked, book } = state;
 
-    if (isLiked) {
-      // 찜 해제 -> 해당 책 제거
-      const updatedBooks = parsedBooks.filter(
-        (b) => !(String(b.id) === String(id) && b.status === "wish"),
-      );
-      localStorage.setItem("myBooks", JSON.stringify(updatedBooks));
-      setIsLiked(false);
-    } else {
-      // 찜 추가 -> status: "wish" 항목 생성
-      const newWishBook = {
-        id: id,
-        title: book.title,
-        author: book.author,
-        cover: book.cover,
-        status: "wish",
-      };
-      const updatedBooks = [...parsedBooks, newWishBook];
-      localStorage.setItem("myBooks", JSON.stringify(updatedBooks));
-      setIsLiked(true);
-    }
+    //찜 해제/추가 처리
+    const updatedBooks = isLiked
+      ? savedBooks.filter((savedBook) => !isSameWishBook(savedBook, id))
+      : [
+          ...savedBooks,
+          {
+            id,
+            title: book.title,
+            author: book.author,
+            cover: book.cover,
+            status: "wish",
+          },
+        ];
+
+    localStorage.setItem("myBooks", JSON.stringify(updatedBooks));
+    setState((prev) => ({ ...prev, isLiked: !prev.isLiked }));
   };
-  if (isLoading) {
-    return <Loading />;
-  }
+
+  const { book, isLoading, isLiked } = state;
+
+  if (isLoading) return <Loading />;
 
   if (!book) {
     return (
@@ -82,15 +97,12 @@ export default function Detail() {
     categoryName,
     customerReviewRank,
     pubDate,
-    subInfo, // 쪽수 정보 포함 (subInfo.itemPage)
+    subInfo,
     description,
   } = book;
 
-  // 장르 (카테고리 이름에서 세부 장르 추출 ("국내도서>소설/시/희곡>한국소설" -> "한국소설")
   const genre = categoryName ? categoryName.split(">").pop() : "기타";
-
-  // 평점 계산 (10점 만점을 5점 만점으로 환산하거나 그대로 사용)
-  const rating = customerReviewRank ? customerReviewRank : "0.0";
+  const rating = customerReviewRank ?? "0.0";
 
   return (
     <div className="max-w-md min-h-screen mx-auto px-[25px] pt-[40px] space-y-[40px]">
@@ -100,6 +112,7 @@ export default function Detail() {
         </Link>
         <h3>책 정보</h3>
       </div>
+
       <div className="flex flex-col w-full justify-center items-center gap-[12px]">
         {/* 커버 이미지 & 좋아요 버튼 */}
         <div className="relative w-[160px] h-[210px] bg-black/10 rounded-md overflow-hidden flex justify-center items-center">

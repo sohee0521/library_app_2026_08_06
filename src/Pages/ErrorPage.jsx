@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import error_img from "../Img/error_img.png";
+import error_img from "../Img/error_img.jpg";
 
 export default function ErrorPage() {
   return (
@@ -16,8 +16,7 @@ export default function ErrorPage() {
       <div className="space-y-[10px]">
         <h2 className=" text-[var(--black,#111)]">Page Not Found</h2>
         <p className=" text-[var(--dark-gray,#666)] ">
-          The page you are looking for doesn't exist <br />
-          or has been moved.
+          찾으시려는 페이지가 존재하지 않거나 이동되었습니다
         </p>
       </div>
 

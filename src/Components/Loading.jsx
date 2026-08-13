@@ -1,4 +1,3 @@
-import sleeping_cat from "../Img/sleeping_cat.png";
 import { RotatingLines } from "react-loader-spinner";
 
 export default function Loading() {
