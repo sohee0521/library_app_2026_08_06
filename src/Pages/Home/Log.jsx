@@ -178,9 +178,9 @@ export default function Log() {
               <button
                 type="button"
                 onClick={handleDeleteBook}
-                className="p-1 hover:opacity-70 transition-opacity cursor-pointer"
+                className="p-1 bg-[#] transition-opacity cursor-pointer"
               >
-                <Trash size={16} color="var(--dark-gray)" />
+                <Trash size={16} color="#FF5E5E" />
               </button>
             </div>
           </div>

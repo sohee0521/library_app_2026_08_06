@@ -43,17 +43,39 @@ export const getAladinBooks = async (
 // 도서 키워드 검색하기
 
 export const searchAladinBooks = async (query) => {
-  if (!query) return [];
+  if (!query || !query.trim()) return [];
 
+  const trimmedQuery = query.trim();
+
+  // 1차 검색: 원본 검색어로 API 요청
   const data = await fetchAladinApi("ItemSearch.aspx", {
-    Query: query,
+    Query: trimmedQuery,
     QueryType: "Title",
     MaxResults: 20,
     SearchTarget: "Book",
   });
 
-  const items = data?.item || [];
-  console.log(`[알라딘 검색 - '${query}'] 결과:`, items);
+  let items = data?.item || [];
+
+  // 2차 검색 :결과가 없고, 검색어에 공백이 없으며, 2글자 이상인 경우
+  if (
+    items.length === 0 &&
+    !trimmedQuery.includes(" ") &&
+    trimmedQuery.length >= 2
+  ) {
+    const spacedQuery = trimmedQuery.split("").join(" ");
+
+    const fallbackData = await fetchAladinApi("ItemSearch.aspx", {
+      Query: spacedQuery,
+      QueryType: "Title",
+      MaxResults: 20,
+      SearchTarget: "Book",
+    });
+
+    items = fallbackData?.item || [];
+  } else {
+  }
+
   return items;
 };
 

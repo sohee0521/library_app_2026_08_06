@@ -6,6 +6,7 @@ import { searchAladinBooks, getAladinBookDetail } from "../../api/bookApi";
 export default function AddBook() {
   const navigate = useNavigate();
 
+  // 1. 폼 데이터 단일 객체 관리
   const [formData, setFormData] = useState({
     title: "",
     since: "",
@@ -13,35 +14,66 @@ export default function AddBook() {
     memoText: "",
   });
 
+  // 2. 검색 관련 상태 (로딩 상태 추가)
   const [searchState, setSearchState] = useState({
     results: [],
     selectedBook: null,
+    isSearching: false,
   });
 
-  // 에러 및 제출 상태
+  // 3. 제출 및 에러 상태
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({ title: "", date: "" });
 
   const { title, since, until, memoText } = formData;
-  const { results: searchResults, selectedBook } = searchState;
+  const { results: searchResults, selectedBook, isSearching } = searchState;
 
+  // 입력값 변경 핸들러
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // 4. 디바운스가 적용된 도서 검색 Effect
   useEffect(() => {
-    if (!title.trim() || selectedBook) {
-      setSearchState((prev) => ({ ...prev, results: [] }));
+    const trimmedTitle = title.trim();
+
+    // 입력값이 없거나 이미 선택된 책이 있으면 검색 결과 초기화
+    if (!trimmedTitle || selectedBook) {
+      setSearchState((prev) => ({ ...prev, results: [], isSearching: false }));
       return;
     }
 
-    searchAladinBooks(title).then((results) => {
-      setSearchState((prev) => ({ ...prev, results: results || [] }));
-    });
+    let isSubscribed = true;
+    setSearchState((prev) => ({ ...prev, isSearching: true }));
+
+    // 200ms 디바운스
+    const timer = setTimeout(async () => {
+      try {
+        const results = await searchAladinBooks(trimmedTitle);
+        if (isSubscribed) {
+          setSearchState((prev) => ({
+            ...prev,
+            results: results || [],
+            isSearching: false,
+          }));
+        }
+      } catch (error) {
+        console.error("도서 검색 중 오류 발생:", error);
+        if (isSubscribed) {
+          setSearchState((prev) => ({ ...prev, isSearching: false }));
+        }
+      }
+    }, 200);
+
+    return () => {
+      isSubscribed = false;
+      clearTimeout(timer);
+    };
   }, [title, selectedBook]);
 
+  // 책 선택
   const handleSelectBook = (book) => {
-    setSearchState({ selectedBook: book, results: [] });
+    setSearchState({ selectedBook: book, results: [], isSearching: false });
     handleInputChange("title", book.title);
   };
 
@@ -63,7 +95,7 @@ export default function AddBook() {
     return !newErrors.title && !newErrors.date;
   };
 
-  // 최종 데이터 생성
+  // 최종 상세 정보 수집
   const fetchFinalBookData = async () => {
     let targetBook = selectedBook;
 
@@ -101,7 +133,7 @@ export default function AddBook() {
     return finalData;
   };
 
-  // 저장 함수
+  // 저장 처리
   const handleSave = async (e) => {
     e.preventDefault();
     setSubmitted(true);
@@ -197,30 +229,49 @@ export default function AddBook() {
             </div>
           )}
 
-          {/* 검색결과 */}
-          {searchResults.length > 0 && (
-            <div className="max-h-[250px] overflow-y-auto bg-white border border-[var(--gray)] rounded-[5px] shadow-md divide-y divide-[var(--gray)] z-10">
-              {searchResults.map((book) => (
-                <div
-                  key={book.itemId}
-                  onClick={() => handleSelectBook(book)}
-                  className="p-[10px] flex gap-[15px] items-center hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    className="w-[45px] h-[60px] object-cover rounded-[1px] flex-shrink-0 bg-gray-100"
-                  />
-                  <div className="flex flex-col gap-1 overflow-hidden">
-                    <h5 className="font-bold text-[var(--black)] truncate">
-                      {book.title}
-                    </h5>
-                    <h6 className="text-[var(--dark-gray)] truncate">
-                      {book.author}
-                    </h6>
-                  </div>
-                </div>
-              ))}
+          {/* 검색 결과 목록 */}
+          {title.trim() && !selectedBook && (
+            <div className="max-h-[250px] overflow-y-auto bg-white border border-[var(--gray)] rounded-[5px] shadow-md divide-y divide-[var(--gray)] z-10 [::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+              {isSearching ? (
+                <h6 className="p-[15px] text-center text-[var(--dark-gray)]">
+                  검색 중입니다...
+                </h6>
+              ) : searchResults.length > 0 ? (
+                searchResults.map((book) => {
+                  const bookId = book.itemId || book.isbn13;
+                  const {
+                    title: bookTitle,
+                    author = "작가 미상",
+                    cover,
+                  } = book;
+
+                  return (
+                    <div
+                      key={bookId}
+                      onClick={() => handleSelectBook(book)}
+                      className="p-[10px] flex gap-[15px] items-center hover:bg-gray-100 cursor-pointer transition-colors"
+                    >
+                      <img
+                        src={cover}
+                        alt={bookTitle}
+                        className="w-[45px] h-[60px] object-cover rounded-[1px] flex-shrink-0 bg-gray-100"
+                      />
+                      <div className="flex flex-col gap-1 overflow-hidden">
+                        <h5 className="font-bold text-[var(--black)] truncate">
+                          {bookTitle}
+                        </h5>
+                        <h6 className="text-[var(--dark-gray)] truncate">
+                          {author}
+                        </h6>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <h6 className="py-[15px] text-center text-[var(--dark-gray)]">
+                  검색 결과가 없습니다.
+                </h6>
+              )}
             </div>
           )}
         </div>
@@ -246,7 +297,7 @@ export default function AddBook() {
                         : "text-[#c7c7c7] !font-light"
                     }
                   >
-                    {since || "since"}
+                    {since || "시작일"}
                   </h5>
                   <Calendar size={20} strokeWidth={1.9} />
                 </div>
@@ -273,9 +324,13 @@ export default function AddBook() {
               >
                 <div className="flex w-full justify-between items-center">
                   <h5
-                    className={`text-sm ${until ? "text-[var(--black)]" : "text-[#c7c7c7] !font-light"}`}
+                    className={`text-sm ${
+                      until
+                        ? "text-[var(--black)]"
+                        : "text-[#c7c7c7] !font-light"
+                    }`}
                   >
-                    {until || "until (선택)"}
+                    {until || "완독일 (선택)"}
                   </h5>
                   <Calendar size={20} strokeWidth={1.9} />
                 </div>

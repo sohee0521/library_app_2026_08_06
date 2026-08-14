@@ -131,9 +131,9 @@ export default function Completed() {
                     height: `${book.height}px`,
                     transform: `translateX(${book.offsetX}px)`,
                   }}
-                  className="w-[220px] max-w-[85%] border-[1.5px] border-[var(--black)] bg-white rounded-[2px] flex items-center justify-center px-3 shadow-xs hover:border-[var(--main-blue)] transition-all duration-150 cursor-pointer relative z-10"
+                  className="w-[220px] max-w-[85%] border-[1.5px] border-[var(--black)] bg-white rounded-[2px] flex items-center justify-center  cursor-pointer relative z-10"
                 >
-                  <span className="text-xs font-semibold text-[var(--black)] truncate text-center group-hover:text-[var(--main-blue)]">
+                  <span className="text-xs font-semibold text-[var(--black)] truncate text-center ">
                     {book.title}
                   </span>
                 </div>
