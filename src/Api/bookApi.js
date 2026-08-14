@@ -5,6 +5,9 @@ const TTB_KEY = import.meta.env.VITE_ALADIN_TTB_KEY;
 const fetchAladinApi = async (endpoint, customParams = {}) => {
   try {
     const targetUrl = `http://www.aladin.co.kr/ttb/api/${endpoint}`;
+
+    // 개발 환경: Vite proxy (/api/aladin)
+    // 배포 환경: AllOrigins CORS proxy
     const url = import.meta.env.DEV
       ? `/api/aladin/${endpoint}`
       : `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
@@ -14,14 +17,12 @@ const fetchAladinApi = async (endpoint, customParams = {}) => {
         ttbkey: TTB_KEY,
         Output: "js",
         Version: "20131101",
-        OptResult: "fileFormat,ebookList,packing", // 쪽수, 전자책, 포장정보 기본 포함
-        ...customParams, // 각 API 요청별 변하는 파라미터
+        OptResult: "fileFormat,ebookList,packing",
+        ...customParams,
       },
     });
 
-    let data = response.data;
-
-    return data;
+    return response.data;
   } catch (error) {
     console.error(`[Aladin API Error] ${endpoint}:`, error);
     return null;
