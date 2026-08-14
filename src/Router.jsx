@@ -1,5 +1,5 @@
 import { HashRouter, Route, Routes } from "react-router-dom";
-import ErrorPage from "../src/pages/ErrorPage";
+import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/home/Home";
 import Search from "./pages/search/Search";
 import Detail from "./pages/detail/Detail";

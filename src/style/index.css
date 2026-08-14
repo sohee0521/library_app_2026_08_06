@@ -1,0 +1,143 @@
+@import url("https://fonts.googleapis.com/css2?family=Advent+Pro:ital,wght@0,100..900;1,100..900&display=swap");
+@import "tailwindcss";
+@theme {
+  --font-michroma: "Michroma", sans-serif;
+}
+/* 기본 리셋 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --main-blue: #2ad1ff;
+  --white: #ffffff;
+  --light-gray: #f5f5f5;
+  --gray: #e0e0e0;
+  --dark-gray: #8d8d8d;
+  --black: #1a1a1a;
+}
+
+/* 기본 높이 설정 */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* 기본 body 설정 */
+body {
+  margin: 0;
+  line-height: 1.5;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 22px;
+  letter-spacing: -0.01em;
+  /* 자간 -1% */
+  font-optical-sizing: auto;
+  background-color: #ffffff;
+  color: var(--black);
+}
+
+/* 기본 폰트 설정 */
+/* 쉼표로 묶어두면, 실제 <h> 태그를 쓸 때도 적용 */
+
+h1,
+.h1 {
+  font-family: "Advent Pro", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 48px;
+  font-weight: 400;
+  font-variation-settings: "wdth" 100;
+}
+
+h2,
+.h2 {
+  font-family: "Advent Pro", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 32px;
+  font-weight: 400;
+  font-variation-settings: "wdth" 100;
+}
+
+h3,
+.h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+h4,
+.h4 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+h5,
+.h5 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+h6,
+.h6 {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* 미디어 기본 설정 */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 버튼 기본 */
+button {
+  cursor: pointer;
+}
+
+/* 폼 요소 */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* 링크 기본 */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 리스트 기본 */
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@theme {
+  --breakpoint-xs: 420px;
+}
+
+.advent-pro {
+  font-family: "Advent Pro", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400; /* 원하는 굵기 지정 (예: 100~900) */
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
