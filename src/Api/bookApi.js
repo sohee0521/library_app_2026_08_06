@@ -4,7 +4,12 @@ const TTB_KEY = import.meta.env.VITE_ALADIN_TTB_KEY;
 
 const fetchAladinApi = async (endpoint, customParams = {}) => {
   try {
-    const response = await axios.get(`/api/aladin/${endpoint}`, {
+    const targetUrl = `http://www.aladin.co.kr/ttb/api/${endpoint}`;
+    const url = import.meta.env.DEV
+      ? `/api/aladin/${endpoint}`
+      : `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+
+    const response = await axios.get(url, {
       params: {
         ttbkey: TTB_KEY,
         Output: "js",
