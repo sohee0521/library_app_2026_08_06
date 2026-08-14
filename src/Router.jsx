@@ -1,11 +1,11 @@
 import { HashRouter, Route, Routes } from "react-router-dom";
-import ErrorPage from "../src/Pages/ErrorPage";
-import Home from "./Pages/Home/Home";
-import Search from "./Pages/Search/Search";
-import Detail from "./Pages/detail/Detail";
+import ErrorPage from "../src/pages/ErrorPage";
+import Home from "./pages/home/Home";
+import Search from "./pages/search/Search";
+import Detail from "./pages/detail/Detail";
 import Nav from "./components/Nav";
-import AddBook from "./Pages/Home/AddBook";
-import Log from "./Pages/Home/Log";
+import AddBook from "./pages/home/AddBook";
+import Log from "./pages/home/Log";
 
 export default function Router() {
   return (
