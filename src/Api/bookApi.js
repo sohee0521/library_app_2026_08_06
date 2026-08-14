@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const TTB_KEY = import.meta.env.VITE_ALADIN_TTB_KEY;
+const TTB_KEY = "ttbqkrthgml21821151001";
 
 const fetchAladinApi = async (endpoint, customParams = {}) => {
   try {
