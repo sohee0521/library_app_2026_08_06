@@ -1,16 +1,18 @@
 import axios from "axios";
 
-const TTB_KEY = "ttbqkrthgml21821151001";
+const TTB_KEY = import.meta.env.VITE_ALADIN_TTB_KEY || "ttbqkrthgml21821151001";
 
 const fetchAladinApi = async (endpoint, customParams = {}) => {
   try {
+    // 1. 알라딘 API 실제 원본 전체 주소 구성
     const targetUrl = `http://www.aladin.co.kr/ttb/api/${endpoint}`;
 
-    // 개발 환경: Vite proxy (/api/aladin)
-    // 배포 환경: AllOrigins CORS proxy
+    // 2. 환경별 URL 생성
+    // - 로컬 개발(npm run dev): Vite 프록시(/api/aladin) 사용
+    // - 배포 환경(GitHub Pages): corsproxy.io 우회 서비스 사용
     const url = import.meta.env.DEV
       ? `/api/aladin/${endpoint}`
-      : `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+      : `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
     const response = await axios.get(url, {
       params: {
