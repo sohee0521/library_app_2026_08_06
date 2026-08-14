@@ -4,15 +4,12 @@ const TTB_KEY = import.meta.env.VITE_ALADIN_TTB_KEY || "ttbqkrthgml21821151001";
 
 const fetchAladinApi = async (endpoint, customParams = {}) => {
   try {
-    // 1. 알라딘 API 실제 원본 전체 주소 구성
     const targetUrl = `http://www.aladin.co.kr/ttb/api/${endpoint}`;
 
-    // 2. 환경별 URL 생성
-    // - 로컬 개발(npm run dev): Vite 프록시(/api/aladin) 사용
-    // - 배포 환경(GitHub Pages): corsproxy.io 우회 서비스 사용
+    // 💡 corsproxy.io 유료화 이슈로 인해 allorigins 프록시 사용
     const url = import.meta.env.DEV
       ? `/api/aladin/${endpoint}`
-      : `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+      : `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
     const response = await axios.get(url, {
       params: {
@@ -24,7 +21,19 @@ const fetchAladinApi = async (endpoint, customParams = {}) => {
       },
     });
 
-    return response.data;
+    let data = response.data;
+
+    // 데이터가 문자열로 올 경우 안전하게 JSON 파싱
+    if (typeof data === "string") {
+      const cleanedData = data.trim().replace(/;$/, "");
+      try {
+        data = JSON.parse(cleanedData);
+      } catch (e) {
+        console.warn("[Aladin API] JSON Parse Warning:", e);
+      }
+    }
+
+    return data;
   } catch (error) {
     console.error(`[Aladin API Error] ${endpoint}:`, error);
     return null;
