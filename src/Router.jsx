@@ -2,7 +2,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import ErrorPage from "../src/Pages/ErrorPage";
 import Home from "./Pages/Home/Home";
 import Search from "./Pages/Search/Search";
-import Detail from "./Pages/Detail/Detail";
+import Detail from "./Pages/detail/Detail";
 import Nav from "./components/Nav";
 import AddBook from "./Pages/Home/AddBook";
 import Log from "./Pages/Home/Log";
