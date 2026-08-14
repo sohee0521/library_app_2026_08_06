@@ -6,7 +6,7 @@ const fetchAladinApi = async (endpoint, customParams = {}) => {
   try {
     const targetUrl = `http://www.aladin.co.kr/ttb/api/${endpoint}`;
 
-    // 💡 corsproxy.io 유료화 이슈로 인해 allorigins 프록시 사용
+    // 💡 corsproxy 대신 배포 환경에서 제한이 없는 allorigins 프록시 사용
     const url = import.meta.env.DEV
       ? `/api/aladin/${endpoint}`
       : `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
@@ -23,13 +23,13 @@ const fetchAladinApi = async (endpoint, customParams = {}) => {
 
     let data = response.data;
 
-    // 데이터가 문자열로 올 경우 안전하게 JSON 파싱
+    // 응답 데이터가 문자열로 넘어올 경우 JSON 객체로 파싱
     if (typeof data === "string") {
       const cleanedData = data.trim().replace(/;$/, "");
       try {
         data = JSON.parse(cleanedData);
       } catch (e) {
-        console.warn("[Aladin API] JSON Parse Warning:", e);
+        console.warn("[Aladin API] Data parse warning:", e);
       }
     }
 
