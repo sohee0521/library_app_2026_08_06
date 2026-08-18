@@ -73,21 +73,9 @@ export default function Completed() {
         height,
         offsetX: randomOffset,
         title,
-        page, // 콘솔 확인용 쪽수
+        page,
       };
     });
-
-    // ★ 콘솔 출력 부분 (개발자 도구에서 표 형태로 확인 가능)
-    if (books.length > 0) {
-      console.log("📚 --- 완독 도서 두께(px) 테스트 --- 📚");
-      console.table(
-        books.map((b) => ({
-          제목: b.title,
-          페이지수: `${b.page}쪽`,
-          적용두께: `${b.height.toFixed(1)}px`,
-        })),
-      );
-    }
 
     return books;
   }, [completedBooks]);
