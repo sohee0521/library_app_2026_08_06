@@ -4,17 +4,11 @@ const TTB_KEY = import.meta.env.VITE_ALADIN_TTB_KEY || "ttbqkrthgml21821151001";
 
 const fetchAladinApi = async (endpoint, customParams = {}) => {
   try {
-    const targetUrl = `http://www.aladin.co.kr/ttb/api/${endpoint}`;
-
-    // 💡 corsproxy 대신 배포 환경에서 제한이 없는 allorigins 프록시 사용
-    const url = import.meta.env.DEV
-      ? `/api/aladin/${endpoint}`
-      : `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-
-    const response = await axios.get(url, {
+    // 💡 Vercel 환경에서는 vercel.json이 프록시를 처리하므로 /api/aladin/${endpoint}로 직접 호출합니다.
+    const response = await axios.get(`/api/aladin/${endpoint}`, {
       params: {
         ttbkey: TTB_KEY,
-        Output: "js",
+        output: "js", // 💡 반드시 소문자 'output'이어야 알라딘이 JSON 형식을 반환합니다.
         Version: "20131101",
         OptResult: "fileFormat,ebookList,packing",
         ...customParams,
@@ -23,7 +17,7 @@ const fetchAladinApi = async (endpoint, customParams = {}) => {
 
     let data = response.data;
 
-    // 응답 데이터가 문자열로 넘어올 경우 JSON 객체로 파싱
+    // 응답이 문자열로 올 경우(JSONP/세미콜론 포함) 정리 후 파싱
     if (typeof data === "string") {
       const cleanedData = data.trim().replace(/;$/, "");
       try {
@@ -39,6 +33,7 @@ const fetchAladinApi = async (endpoint, customParams = {}) => {
     return null;
   }
 };
+
 // 베스트셀러
 export const getAladinBooks = async (
   queryType = "Bestseller",
@@ -58,7 +53,6 @@ export const getAladinBooks = async (
 };
 
 // 도서 키워드 검색하기
-
 export const searchAladinBooks = async (query) => {
   if (!query || !query.trim()) return [];
 
@@ -74,7 +68,7 @@ export const searchAladinBooks = async (query) => {
 
   let items = data?.item || [];
 
-  // 2차 검색 :결과가 없고, 검색어에 공백이 없으며, 2글자 이상인 경우
+  // 2차 검색: 결과가 없고 공백 없는 2글자 이상인 경우
   if (
     items.length === 0 &&
     !trimmedQuery.includes(" ") &&
@@ -90,14 +84,12 @@ export const searchAladinBooks = async (query) => {
     });
 
     items = fallbackData?.item || [];
-  } else {
   }
 
   return items;
 };
 
 // 도서 ID로 상세 정보 가져오기
-
 export const getAladinBookDetail = async (itemId, itemIdType = "ItemId") => {
   if (!itemId) return null;
 
@@ -110,17 +102,3 @@ export const getAladinBookDetail = async (itemId, itemIdType = "ItemId") => {
   console.log(`[알라딘 상세조회 - ID: ${itemId}] 결과:`, bookDetail);
   return bookDetail;
 };
-
-// // 테스트
-// (async () => {
-//   console.log(" 알라딘 공통 API 테스트 실행 중...");
-
-//   // 리스트 테스트
-//   await getAladinBooks("Bestseller");
-
-//   // 검색 후 첫 번째 책 상세 정보까지 연쇄 조회 테스트
-//   const searchResults = await searchAladinBooks("모순");
-//   if (searchResults.length > 0) {
-//     await getAladinBookDetail(searchResults[0].itemId);
-//   }
-// })();
