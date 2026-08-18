@@ -29,8 +29,8 @@ export default function Home() {
   }, [location.state]);
 
   return (
-    <div className="relative max-w-md h-full  mx-auto px-[25px] pt-[60px] pb-[100px] ">
-      <div className="space-y-[40px]">
+    <div className="relative max-w-md h-full  mx-auto  pb-[80px] px-[25px] pt-[60px]  ">
+      <div className="space-y-[40px] ">
         <h1>MY SHELF</h1>
 
         {/* 탭 메뉴 */}
