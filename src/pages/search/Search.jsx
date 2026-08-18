@@ -74,7 +74,7 @@ export default function Search() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-[25px] pt-[40px] space-y-[30px] relative">
+    <div className="max-w-md mx-auto min-h-full px-[25px] pt-[40px] space-y-[30px] relative">
       {/* 검색 시 오버레이 배경 */}
       {isSearchActive && (
         <div

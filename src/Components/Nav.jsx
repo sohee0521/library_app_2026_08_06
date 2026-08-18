@@ -9,7 +9,7 @@ export default function Nav() {
   const inactiveColor = "var(--dark-gray)";
 
   return (
-    <div className="fixd bottom-0 left-0 right-0 mx-auto max-w-md h-[70px] flex items-center bg-[var(--black)] text-[var(--dark-gray)] z-10 border-t-[1px] border-[var(--dark-gray)]">
+    <div className="fixed bottom-0 left-0 right-0 mx-auto max-w-md h-[70px] flex items-center bg-[var(--black)] text-[var(--dark-gray)] z-10 border-t-[1px] border-[var(--dark-gray)]">
       <div className="w-full px-[50px] flex justify-between items-center pointer-events-auto">
         {/* Shelf (메인)*/}
         <Link to="/">
