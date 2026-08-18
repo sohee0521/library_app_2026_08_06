@@ -175,208 +175,214 @@ export default function AddBook() {
   };
 
   return (
-    <div className="max-w-md min-h-screen mx-auto px-[25px] pt-[50px] space-y-[40px]">
-      <div>
-        <Link to={-1}>
-          <div className="flex gap-[5px] items-center">
-            <ChevronLeft size={28} strokeWidth={1.5} color="var(--dark-gray)" />
-            <h3>책 추가</h3>
-          </div>
-        </Link>
-      </div>
-
-      <form onSubmit={handleSave} className="flex flex-col gap-[50px]">
-        {/* 제목 입력 */}
-        <div className="flex flex-col gap-[10px]">
-          <h4 className="!font-bold">어떤 책을 읽으셨나요?</h4>
-          <div className="w-full h-[45px] flex justify-between items-center px-[10px] bg-[var(--light-gray)] text-[var(--dark-gray)] rounded-[5px] outline-none transition-all focus-within:ring-2 focus-within:ring-[var(--main-blue)]">
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => {
-                handleInputChange("title", e.target.value);
-                if (selectedBook)
-                  setSearchState((prev) => ({ ...prev, selectedBook: null }));
-              }}
-              placeholder="제목을 검색하세요"
-              className={`w-full outline-none bg-transparent ${
-                title ? "text-[var(--black)]" : "text-[var(--dark-gray)]"
-              }`}
-            />
-          </div>
-
-          {submitted && errors.title && (
-            <h6 className="text-[var(--main-blue)] pl-1">{errors.title}</h6>
-          )}
-
-          {/* 선택된 책 표기 */}
-          {selectedBook && (
-            <div className="flex items-center gap-[10px] p-[10px] bg-[#f2fcff] border border-[var(--main-blue)] rounded-[5px]">
-              <img
-                src={selectedBook.cover}
-                alt={selectedBook.title}
-                className="w-[35px] h-[48px] object-cover rounded-[3px]"
+    <div className="max-w-md min-h-screen mx-auto px-[25px] pt-[50px] ">
+      <div className="space-y-[40px] pb-[90px]">
+        <div>
+          <Link to={-1}>
+            <div className="flex gap-[5px] items-center">
+              <ChevronLeft
+                size={28}
+                strokeWidth={1.5}
+                color="var(--dark-gray)"
               />
-              <div className="flex flex-col flex-1 overflow-hidden">
-                <div className="flex items-center gap-1 text-[var(--main-blue)]">
-                  <Check size={14} />
-                  <h6 className="!font-medium !text-[13px]">선택됨</h6>
+              <h3>책 추가</h3>
+            </div>
+          </Link>
+        </div>
+
+        <form onSubmit={handleSave} className="flex flex-col gap-[50px]">
+          {/* 제목 입력 */}
+          <div className="flex flex-col gap-[10px]">
+            <h4 className="!font-bold">어떤 책을 읽으셨나요?</h4>
+            <div className="w-full h-[45px] flex justify-between items-center px-[10px] bg-[var(--light-gray)] text-[var(--dark-gray)] rounded-[5px] outline-none transition-all focus-within:ring-2 focus-within:ring-[var(--main-blue)]">
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => {
+                  handleInputChange("title", e.target.value);
+                  if (selectedBook)
+                    setSearchState((prev) => ({ ...prev, selectedBook: null }));
+                }}
+                placeholder="제목을 검색하세요"
+                className={`w-full outline-none bg-transparent ${
+                  title ? "text-[var(--black)]" : "text-[var(--dark-gray)]"
+                }`}
+              />
+            </div>
+
+            {submitted && errors.title && (
+              <h6 className="text-[var(--main-blue)] pl-1">{errors.title}</h6>
+            )}
+
+            {/* 선택된 책 표기 */}
+            {selectedBook && (
+              <div className="flex items-center gap-[10px] p-[10px] bg-[#f2fcff] border border-[var(--main-blue)] rounded-[5px]">
+                <img
+                  src={selectedBook.cover}
+                  alt={selectedBook.title}
+                  className="w-[35px] h-[48px] object-cover rounded-[3px]"
+                />
+                <div className="flex flex-col flex-1 overflow-hidden">
+                  <div className="flex items-center gap-1 text-[var(--main-blue)]">
+                    <Check size={14} />
+                    <h6 className="!font-medium !text-[13px]">선택됨</h6>
+                  </div>
+                  <h6 className="text-gray-600 truncate">
+                    {selectedBook.author}
+                  </h6>
                 </div>
-                <h6 className="text-gray-600 truncate">
-                  {selectedBook.author}
-                </h6>
+              </div>
+            )}
+
+            {/* 검색 결과 목록 */}
+            {title.trim() && !selectedBook && (
+              <div className="max-h-[250px] overflow-y-auto bg-white border border-[var(--gray)] rounded-[5px] shadow-md divide-y divide-[var(--gray)] z-10 [::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+                {isSearching ? (
+                  <h6 className="p-[15px] text-center text-[var(--dark-gray)]">
+                    검색 중입니다...
+                  </h6>
+                ) : searchResults.length > 0 ? (
+                  searchResults.map((book) => {
+                    const bookId = book.itemId || book.isbn13;
+                    const {
+                      title: bookTitle,
+                      author = "작가 미상",
+                      cover,
+                    } = book;
+
+                    return (
+                      <div
+                        key={bookId}
+                        onClick={() => handleSelectBook(book)}
+                        className="p-[10px] flex gap-[15px] items-center hover:bg-gray-100 cursor-pointer transition-colors"
+                      >
+                        <img
+                          src={cover}
+                          alt={bookTitle}
+                          className="w-[45px] h-[60px] object-cover rounded-[1px] flex-shrink-0 bg-gray-100"
+                        />
+                        <div className="flex flex-col gap-1 overflow-hidden">
+                          <h5 className="font-bold text-[var(--black)] truncate">
+                            {bookTitle}
+                          </h5>
+                          <h6 className="text-[var(--dark-gray)] truncate">
+                            {author}
+                          </h6>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <h6 className="py-[15px] text-center text-[var(--dark-gray)]">
+                    검색 결과가 없습니다.
+                  </h6>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* 날짜 입력 */}
+          <div className="flex flex-col gap-[10px]">
+            <h4 className="!font-bold">언제 읽으셨나요?</h4>
+            <div className="w-full h-[45px] flex gap-[10px] items-center text-[var(--dark-gray)]">
+              {/* 1. 시작일 선택 */}
+              <div className="w-full outline-none transition-all focus-within:ring-2 focus-within:ring-[var(--main-blue)] rounded-[5px]">
+                <label
+                  htmlFor="since-date"
+                  onClick={() =>
+                    document.getElementById("since-date")?.showPicker()
+                  }
+                  className="w-full h-[45px] flex items-center bg-[var(--light-gray)] px-[10px] rounded-[5px] cursor-pointer"
+                >
+                  <div className="flex w-full justify-between items-center">
+                    <h5
+                      className={
+                        since
+                          ? "text-[var(--black)]"
+                          : "text-[#c7c7c7] !font-light"
+                      }
+                    >
+                      {since || "시작일"}
+                    </h5>
+                    <Calendar size={20} strokeWidth={1.9} />
+                  </div>
+                </label>
+                <input
+                  id="since-date"
+                  type="date"
+                  value={since}
+                  onChange={(e) => handleInputChange("since", e.target.value)}
+                  className="sr-only"
+                />
+              </div>
+
+              <h4>~</h4>
+
+              {/* 2. 종료일 선택 */}
+              <div className="w-full outline-none transition-all focus-within:ring-2 focus-within:ring-[var(--main-blue)] rounded-[5px]">
+                <label
+                  htmlFor="until-date"
+                  onClick={() =>
+                    document.getElementById("until-date")?.showPicker()
+                  }
+                  className="w-full h-[45px] flex items-center bg-[var(--light-gray)] px-[10px] rounded-[5px] cursor-pointer"
+                >
+                  <div className="flex w-full justify-between items-center">
+                    <h5
+                      className={`text-sm ${
+                        until
+                          ? "text-[var(--black)]"
+                          : "text-[#c7c7c7] !font-light"
+                      }`}
+                    >
+                      {until || "완독일 (선택)"}
+                    </h5>
+                    <Calendar size={20} strokeWidth={1.9} />
+                  </div>
+                </label>
+                <input
+                  id="until-date"
+                  type="date"
+                  value={until}
+                  onChange={(e) => handleInputChange("until", e.target.value)}
+                  className="sr-only"
+                />
               </div>
             </div>
-          )}
 
-          {/* 검색 결과 목록 */}
-          {title.trim() && !selectedBook && (
-            <div className="max-h-[250px] overflow-y-auto bg-white border border-[var(--gray)] rounded-[5px] shadow-md divide-y divide-[var(--gray)] z-10 [::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-              {isSearching ? (
-                <h6 className="p-[15px] text-center text-[var(--dark-gray)]">
-                  검색 중입니다...
-                </h6>
-              ) : searchResults.length > 0 ? (
-                searchResults.map((book) => {
-                  const bookId = book.itemId || book.isbn13;
-                  const {
-                    title: bookTitle,
-                    author = "작가 미상",
-                    cover,
-                  } = book;
+            {submitted && errors.date && (
+              <h6 className="text-[var(--main-blue)] pl-1">{errors.date}</h6>
+            )}
+          </div>
 
-                  return (
-                    <div
-                      key={bookId}
-                      onClick={() => handleSelectBook(book)}
-                      className="p-[10px] flex gap-[15px] items-center hover:bg-gray-100 cursor-pointer transition-colors"
-                    >
-                      <img
-                        src={cover}
-                        alt={bookTitle}
-                        className="w-[45px] h-[60px] object-cover rounded-[1px] flex-shrink-0 bg-gray-100"
-                      />
-                      <div className="flex flex-col gap-1 overflow-hidden">
-                        <h5 className="font-bold text-[var(--black)] truncate">
-                          {bookTitle}
-                        </h5>
-                        <h6 className="text-[var(--dark-gray)] truncate">
-                          {author}
-                        </h6>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <h6 className="py-[15px] text-center text-[var(--dark-gray)]">
-                  검색 결과가 없습니다.
-                </h6>
-              )}
+          {/* 메모 입력 */}
+          <div className="flex flex-col gap-[10px]">
+            <div className="flex items-center gap-[5px]">
+              <h4 className="!font-bold">어떤 점이 기억에 남나요?</h4>
+              <h5 className="text-[var(--dark-gray)]">(선택)</h5>
             </div>
-          )}
-        </div>
-
-        {/* 날짜 입력 */}
-        <div className="flex flex-col gap-[10px]">
-          <h4 className="!font-bold">언제 읽으셨나요?</h4>
-          <div className="w-full h-[45px] flex gap-[10px] items-center text-[var(--dark-gray)]">
-            {/* 1. 시작일 선택 */}
-            <div className="w-full outline-none transition-all focus-within:ring-2 focus-within:ring-[var(--main-blue)] rounded-[5px]">
-              <label
-                htmlFor="since-date"
-                onClick={() =>
-                  document.getElementById("since-date")?.showPicker()
-                }
-                className="w-full h-[45px] flex items-center bg-[var(--light-gray)] px-[10px] rounded-[5px] cursor-pointer"
-              >
-                <div className="flex w-full justify-between items-center">
-                  <h5
-                    className={
-                      since
-                        ? "text-[var(--black)]"
-                        : "text-[#c7c7c7] !font-light"
-                    }
-                  >
-                    {since || "시작일"}
-                  </h5>
-                  <Calendar size={20} strokeWidth={1.9} />
-                </div>
-              </label>
-              <input
-                id="since-date"
-                type="date"
-                value={since}
-                onChange={(e) => handleInputChange("since", e.target.value)}
-                className="sr-only"
-              />
-            </div>
-
-            <h4>~</h4>
-
-            {/* 2. 종료일 선택 */}
-            <div className="w-full outline-none transition-all focus-within:ring-2 focus-within:ring-[var(--main-blue)] rounded-[5px]">
-              <label
-                htmlFor="until-date"
-                onClick={() =>
-                  document.getElementById("until-date")?.showPicker()
-                }
-                className="w-full h-[45px] flex items-center bg-[var(--light-gray)] px-[10px] rounded-[5px] cursor-pointer"
-              >
-                <div className="flex w-full justify-between items-center">
-                  <h5
-                    className={`text-sm ${
-                      until
-                        ? "text-[var(--black)]"
-                        : "text-[#c7c7c7] !font-light"
-                    }`}
-                  >
-                    {until || "완독일 (선택)"}
-                  </h5>
-                  <Calendar size={20} strokeWidth={1.9} />
-                </div>
-              </label>
-              <input
-                id="until-date"
-                type="date"
-                value={until}
-                onChange={(e) => handleInputChange("until", e.target.value)}
-                className="sr-only"
+            <div className="w-full min-h-[150px] flex items-start px-[10px] pt-[15px] bg-[var(--light-gray)] text-[var(--dark-gray)] rounded-[5px] outline-none transition-all focus-within:ring-2 focus-within:ring-[var(--main-blue)]">
+              <textarea
+                value={memoText}
+                onChange={(e) => handleInputChange("memoText", e.target.value)}
+                rows={6}
+                placeholder="책을 읽고 오늘의 감상평을 적어보세요"
+                className={`w-full outline-none resize-none bg-[var(--light-gray)] ${
+                  memoText ? "text-[var(--black)]" : "text-[var(--dark-gray)]"
+                }`}
               />
             </div>
           </div>
 
-          {submitted && errors.date && (
-            <h6 className="text-[var(--main-blue)] pl-1">{errors.date}</h6>
-          )}
-        </div>
-
-        {/* 메모 입력 */}
-        <div className="flex flex-col gap-[10px]">
-          <div className="flex items-center gap-[5px]">
-            <h4 className="!font-bold">어떤 점이 기억에 남나요?</h4>
-            <h5 className="text-[var(--dark-gray)]">(선택)</h5>
-          </div>
-          <div className="w-full min-h-[150px] flex items-start px-[10px] pt-[15px] bg-[var(--light-gray)] text-[var(--dark-gray)] rounded-[5px] outline-none transition-all focus-within:ring-2 focus-within:ring-[var(--main-blue)]">
-            <textarea
-              value={memoText}
-              onChange={(e) => handleInputChange("memoText", e.target.value)}
-              rows={6}
-              placeholder="책을 읽고 오늘의 감상평을 적어보세요"
-              className={`w-full outline-none resize-none bg-[var(--light-gray)] ${
-                memoText ? "text-[var(--black)]" : "text-[var(--dark-gray)]"
-              }`}
-            />
-          </div>
-        </div>
-
-        {/* 저장 버튼 */}
-        <button
-          type="submit"
-          className="w-full h-[45px] rounded-[5px] text-white bg-[var(--main-blue)] cursor-pointer hover:brightness-95 active:brightness-75 active:scale-[0.99] transition-all duration-150"
-        >
-          <h4>저장</h4>
-        </button>
-      </form>
+          {/* 저장 버튼 */}
+          <button
+            type="submit"
+            className="w-full h-[45px] rounded-[5px] text-white bg-[var(--main-blue)] cursor-pointer hover:brightness-95 active:brightness-75 active:scale-[0.99] transition-all duration-150"
+          >
+            <h4>저장</h4>
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
