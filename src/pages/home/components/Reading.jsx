@@ -28,8 +28,8 @@ export default function Reading() {
   });
 
   return (
-    <div className="h-full relative">
-      <div className="flex flex-col  gap-[140px] justify-center items-center mt-[150px] mb-auto pb-[100px]">
+    <div className=" relative">
+      <div className="flex flex-col  gap-[140px] justify-center items-center mt-[150px] mb-auto">
         {/* 4개의 선반을 순회 */}
         {shelvesData.map((shelfBooks, shelfIndex) => (
           <div
@@ -37,7 +37,7 @@ export default function Reading() {
             className="w-full flex flex-col justify-center items-center relative"
           >
             {/* 선반 위에 올려질 책 영역 */}
-            <div className="absolute bottom-[45px] left-105px] px-[20px] flex items-end justify-start gap-[15px] z-10">
+            <div className="absolute bottom-[45px]  px-[20px] flex items-end justify-start gap-[15px] z-10">
               {shelfBooks.map((book) => (
                 <Link
                   to={`/log/${book.id}`}
@@ -71,7 +71,7 @@ export default function Reading() {
           </div>
         ))}
 
-        <div className="absolute right-[36px] bottom-[126px]">
+        <div className="absolute right-[36px] bottom-[26px]">
           <img src={cat} alt="고양이" />
         </div>
       </div>

@@ -41,7 +41,7 @@ export default function BestSeller() {
   }
 
   return (
-    <div className="space-y-[30px] max-h-[750px]  overflow-y-auto  [::-webkit-scrollbar]:hidden [scrollbar-width:none] ">
+    <div className="space-y-[30px] max-h-[700px]  overflow-y-auto  [::-webkit-scrollbar]:hidden [scrollbar-width:none] ">
       <h1 className="mt-[10px]">Best Seller</h1>
       <div className="flex gap-[10px] overflow-x-auto  [::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         {GENRES.map((genre) => {

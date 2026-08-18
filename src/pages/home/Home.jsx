@@ -29,7 +29,7 @@ export default function Home() {
   }, [location.state]);
 
   return (
-    <div className="relative max-w-md min-h-screen mx-auto px-[25px] pt-[60px]">
+    <div className="relative max-w-md h-full  mx-auto px-[25px] pt-[60px]  ">
       <div className="space-y-[40px]">
         <h1>MY SHELF</h1>
 
